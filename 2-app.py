@@ -12,6 +12,7 @@ st.write("This application visualizes the gradient vector $\\nabla f(x, y)$ on a
 
 # 3. Sidebar for User Input
 st.sidebar.header("User Input Settings")
+# Default function set to sin(x)*cos(y) to test the scaling logic
 equation_input = st.sidebar.text_input("Enter function f(x, y):", "sin(x)*cos(y)")
 x_coord = st.sidebar.slider("Point x:", -5.0, 5.0, 1.0)
 y_coord = st.sidebar.slider("Point y:", -5.0, 5.0, 1.0)
@@ -30,19 +31,19 @@ try:
     grad_y_val = float(fy.subs({x: x_coord, y: y_coord}))
     z_coord = float(f_sym.subs({x: x_coord, y: y_coord}))
 
-    # --- AUTO-SCALE LOGIC (Unit Vector) ---
-    # This ensures the arrow is visible even for small gradients like sin/cos
+    # --- AUTO-SCALE LOGIC (Normalization) ---
+    # This ensures the arrow is visible even for very small gradients
     magnitude = np.sqrt(grad_x_val**2 + grad_y_val**2)
     
     if magnitude > 0:
-        # Normalize and set a fixed display length of 1.5 units
+        # Normalize and set a fixed display length of 1.5 units for the visual
         display_x = (grad_x_val / magnitude) * 1.5
         display_y = (grad_y_val / magnitude) * 1.5
     else:
         display_x, display_y = 0, 0
     # ---------------------------------------
 
-    # 5. Display Results in Columns
+    # 5. Display Mathematical Results
     col1, col2 = st.columns(2)
     with col1:
         st.write("### Mathematical Expression")
@@ -76,7 +77,7 @@ try:
         z=[z_coord, z_coord],
         mode='lines',
         line=dict(color='yellow', width=12),
-        name="Gradient Direction"
+        name="Gradient Shaft"
     ))
 
     # Add the Gradient Arrow Head (The Cone)
@@ -109,7 +110,7 @@ try:
     st.plotly_chart(fig, use_container_width=True)
 
 except Exception as e:
-    st.error(f"Error: {e}. Please ensure you use Python syntax (e.g., x**2).")
+    st.error(f"Error: {e}. Please ensure you use Python syntax (e.g., x**2 instead of x^2).")
 
 st.markdown("---")
 st.caption("Calculus MAT201 Assignment | Developed with Streamlit & Plotly")
